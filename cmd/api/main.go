@@ -6,10 +6,8 @@ package main
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"embed"
 	"encoding/base64"
 	"encoding/json"
-	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -19,10 +17,8 @@ import (
 
 	"cloud189-checkin/internal/checkin"
 	"cloud189-checkin/internal/store"
+	"cloud189-checkin/web"
 )
-
-//go:embed web
-var webFS embed.FS
 
 var backend store.Store
 
@@ -47,8 +43,7 @@ func main() {
 	mux.HandleFunc("GET /api/checkin", handleCheckin) // cron 用 GET
 	mux.HandleFunc("POST /api/checkin", needAuth(handleCheckin))
 	// 静态前端
-	sub, _ := fs.Sub(webFS, "web")
-	mux.Handle("GET /", http.FileServer(http.FS(sub)))
+	mux.Handle("GET /", http.FileServer(http.FS(web.FS)))
 
 	port := os.Getenv("PORT")
 	if port == "" {

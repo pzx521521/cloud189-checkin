@@ -29,8 +29,8 @@ async function loadAccounts() {
 function renderAccounts() {
   const el = document.getElementById('accounts');
   el.innerHTML = accounts.map((a, i) =>
-    `<div>${a.username} ${a.password ? '' : '(密码未在本地，需重新输入后保存)'} ` +
-    `<button onclick="delAccount(${i})">删除</button></div>`).join('') || '暂无账号';
+    `<div><span><strong>${a.username}</strong>${a.password ? '' : '<span class="badge-tip">密码未在本地，需重新输入后保存</span>'}</span>` +
+    `<button onclick="delAccount(${i})">删除</button></div>`).join('') || '<div style="color:var(--text-muted);text-align:center;padding:16px;background:#f8fafc;border-radius:8px;border:1px dashed var(--border);">暂无账号，请在下方添加</div>';
 }
 
 function addAccount() {

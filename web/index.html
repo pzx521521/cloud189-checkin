@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>天翼云盘自动签到平台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --success: #10b981;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
+  line-height: 1.5;
+  padding: 32px 16px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title .logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+}
+
+.header-title h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.header-title p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+.login-wrapper {
+  max-width: 420px;
+  margin: 60px auto;
+}
+
+.login-wrapper .card {
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.input-row input {
+  flex: 1 1 200px;
+  width: auto;
+  min-width: 0;
+}
+
+input[type="text"],
+input[type="password"],
+input:not([type]) {
+  width: 100%;
+  display: block;
+  padding: 11px 14px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  background-color: #fff;
+  color: var(--text-main);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+.btn-secondary {
+  background-color: #f1f5f9;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+
+.btn-secondary:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--border);
+  color: var(--text-main);
+}
+
+.btn-outline:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* 账号列表容器 */
+#accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#accounts > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#accounts button {
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--danger);
+  border: 1px solid #fecaca;
+  background: #fff;
+  border-radius: 6px;
+}
+
+#accounts button:hover {
+  background: #fef2f2;
+  border-color: var(--danger);
+}
+
+.badge-tip {
+  font-size: 12px;
+  font-weight: normal;
+  color: #d97706;
+  background: #fef3c7;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  margin-left: 8px;
+}
+
+.sub-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* 结果控制台 */
+pre#checkinResult {
+  background: #0f172a;
+  color: #38bdf8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  max-height: 280px;
+  margin-top: 14px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border: 1px solid #1e293b;
+}
+
+pre#checkinResult:empty {
+  display: none;
+}
+
+/* 表格样式 */
+.table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 14px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+}
+
+th {
+  background-color: #f8fafc;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+td {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #334155;
+  border-bottom: 1px solid var(--border);
+  word-break: break-word;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 16px 12px;
+  }
+  .card {
+    padding: 18px 14px;
+  }
+  .input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .input-row input {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- 登录卡片 -->
+  <div class="login-wrapper" id="loginCard">
+    <div class="card">
+      <div class="header-title" style="margin-bottom: 24px; justify-content: center; text-align: center; flex-direction: column;">
+        <div class="logo-icon">☁️</div>
+        <div>
+          <h2>天翼云盘签到</h2>
+          <p>请输入任意已配置的账号完成验证</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="username">手机号 / 账号</label>
+        <input id="username" placeholder="请输入手机号" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input id="password" type="password" placeholder="请输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+      </div>
+      <button class="btn-primary btn-block" style="margin-top: 8px;" onclick="login()">登录管理面板</button>
+    </div>
+  </div>
+
+  <!-- 主界面卡片 -->
+  <div id="mainCard" class="hidden">
+    <header class="header">
+      <div class="header-title">
+        <div class="logo-icon">☁️</div>
+        <div>
+          <h2>天翼云盘签到控制台</h2>
+          <p>支持个人签到与家庭签到任务自动化执行</p>
+        </div>
+      </div>
+      <div>
+        <button class="btn-outline" onclick="location.reload()">退出 / 刷新</button>
+      </div>
+    </header>
+
+    <!-- 账号管理 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">账号列表</span>
+        <button class="btn-secondary" onclick="saveAccounts()">保存全部列表</button>
+      </div>
+      <div id="accounts"></div>
+      
+      <div class="sub-section-title">添加新账号</div>
+      <div class="input-row">
+        <input id="newUser" placeholder="手机号">
+        <input id="newPass" type="password" placeholder="密码" onkeydown="if(event.key==='Enter')addAccount()">
+        <button class="btn-primary" onclick="addAccount()">加入列表</button>
+      </div>
+    </div>
+
+    <!-- 签到触发 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">立即签到</span>
+        <button class="btn-primary" onclick="runCheckin()">立即签到全部账号</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted);">
+        点击后将立即对所有已保存的账号执行个人签到与家庭签到抽奖任务。
+      </p>
+      <pre id="checkinResult"></pre>
+    </div>
+
+    <!-- 签到日志 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">执行日志</span>
+        <button class="btn-outline" onclick="loadLogs()">刷新日志</button>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width: 140px;">时间</th>
+              <th style="min-width: 110px;">账号</th>
+              <th>个人签到</th>
+              <th>家庭签到</th>
+              <th>状态/错误</th>
+            </tr>
+          </thead>
+          <tbody id="logs"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
