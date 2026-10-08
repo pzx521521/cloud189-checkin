@@ -33,6 +33,8 @@ func (t Token) Valid() bool {
 type LogEntry struct {
 	Time     string           `json:"time"`
 	User     string           `json:"user"` // 脱敏
+	LoginMethod string         `json:"loginMethod,omitempty"`
+	TokenRefreshed bool       `json:"tokenRefreshed,omitempty"`
 	Personal map[string]any   `json:"personal"`
 	Families []map[string]any `json:"families"`
 	Error    string           `json:"error,omitempty"`

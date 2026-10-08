@@ -73,6 +73,7 @@ async function loadLogs() {
   const data = await r.json();
   document.getElementById('logs').innerHTML = (data.logs || []).map(l =>
     `<tr><td>${l.time || ''}</td><td>${l.user || ''}</td>` +
+    `<td>${l.loginMethod || ''}${l.tokenRefreshed ? '·刷新' : ''}</td>` +
     `<td>${JSON.stringify(l.personal || {})}</td>` +
     `<td>${JSON.stringify(l.families || [])}</td>` +
     `<td>${l.error || ''}</td></tr>`).join('');

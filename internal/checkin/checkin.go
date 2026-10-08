@@ -14,6 +14,8 @@ import (
 // Result 单账号签到结果。
 type Result struct {
 	User     string           `json:"user"`
+	LoginMethod string         `json:"loginMethod,omitempty"` // token=复用/刷新 token，password=账号密码登录
+	TokenRefreshed bool       `json:"tokenRefreshed,omitempty"` // 本次是否刷新/回写了 token
 	Personal map[string]any   `json:"personal"`
 	Families []map[string]any `json:"families"`
 	Error    string           `json:"error,omitempty"`
@@ -46,6 +48,8 @@ func RunAll(st store.Store) []Result {
 		_ = st.AppendLog(store.LogEntry{
 			Time:     time.Now().Format(time.RFC3339),
 			User:     maskUser(a.Username),
+			LoginMethod: r.LoginMethod,
+			TokenRefreshed: r.TokenRefreshed,
 			Personal: r.Personal,
 			Families: r.Families,
 			Error:    r.Error,
@@ -69,7 +73,10 @@ func runOne(a store.Account, tokens map[string]store.Token) (r Result) {
 	t := tokens[a.Username]
 	if t.Valid() {
 		if s, err := auth.LoginByAccessToken(t.AccessToken); err == nil {
-			return doSign(prepareClient(s), a)
+			r := doSign(prepareClient(s), a)
+			r.LoginMethod = "token"
+			r.TokenRefreshed = false
+			return r
 		} else {
 			slog.Warn("accessToken 登录失败，尝试刷新", "user", r.User, "err", err)
 		}
@@ -83,7 +90,10 @@ func runOne(a store.Account, tokens map[string]store.Token) (r Result) {
 					RefreshToken: firstNonEmpty(rs.RefreshToken, t.RefreshToken),
 					ExpiresIn:    time.Now().Add(6 * 24 * time.Hour).UnixMilli(),
 				}
-				return doSign(prepareClient(s), a)
+				r := doSign(prepareClient(s), a)
+				r.LoginMethod = "token"
+				r.TokenRefreshed = true
+				return r
 			}
 		}
 		slog.Warn("刷新 token 失败，走密码登录", "user", r.User)
@@ -99,7 +109,10 @@ func runOne(a store.Account, tokens map[string]store.Token) (r Result) {
 		RefreshToken: s.RefreshToken,
 		ExpiresIn:    time.Now().Add(6 * 24 * time.Hour).UnixMilli(),
 	}
-	return doSign(prepareClient(s), a)
+	r = doSign(prepareClient(s), a)
+	r.LoginMethod = "password"
+	r.TokenRefreshed = true
+	return r
 }
 
 // prepareClient 由登录会话组装 API 客户端：sessionKey 走 WEB 通道，
