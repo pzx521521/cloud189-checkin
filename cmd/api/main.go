@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"cloud189-checkin/internal/checkin"
+	"cloud189-checkin/internal/notify"
 	"cloud189-checkin/internal/store"
 	"cloud189-checkin/web"
 )
@@ -215,8 +216,9 @@ func handleLogs(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, map[string]any{"total": len(logs), "logs": logs[skip:end]})
 }
 
-// handleCheckin 执行全部账号签到并返回结果。
+// handleCheckin 执行全部账号签到并返回结果，有失败且配了 PUSH_URL 则推送。
 func handleCheckin(w http.ResponseWriter, r *http.Request) {
 	results := checkin.RunAll(backend)
+	notify.NotifyIfFailed(results)
 	writeJSON(w, map[string]any{"results": results, "time": time.Now().Format(time.RFC3339)})
 }

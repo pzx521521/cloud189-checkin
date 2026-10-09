@@ -14,13 +14,14 @@
 - 账号密码首次登录后复用 token：`189_tokens.json` 存 Gist，优先 `accessToken`，其次 `refreshToken` 刷新，最后才密码登录
 - 前端页面管理账号、手动触发签到、查看日志
 
-## 环境变量（3 个）
+## 环境变量（4 个）
 
 | 变量 | 说明 |
 |---|---|
 | `ACCOUNTS_189` | 冷启动种子，`138xxx:pass1,139xxx:pass2`，逗号或换行分隔，首次自动写入 Gist |
 | `GH_TOKEN`（或 `GITHUB_TOKEN`，前者优先） | 仅 `gist` 权限的 PAT |
 | `GIST_ID` | 私密 Gist ID |
+| `PUSH_URL` | 可选，企微机器人 webhook，为空不推，仅签到失败时推 |
 
 Gist 内固定 3 个文件：`189_accounts.json`、`189_tokens.json`、`189_logs.json`（保留最近 200 条）。
 
